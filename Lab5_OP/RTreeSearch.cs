@@ -42,5 +42,18 @@ namespace Lab5_OP
             return Math.Sqrt(Math.Pow(xLength, 2) + Math.Pow(yLength, 2)) <= radius;
         }
 
+        static double DistanceToPlace(Place site, double x, double y)
+        {
+            double xCoef1 = 111 * Math.Cos(y);
+            double xCoef2 = 111 * Math.Cos(site.Longitude);
+            double yCoef = 111;
+            double xLength = ((site.Latitude - x) * xCoef1 + (site.Latitude - x) * xCoef2) / 2;
+            double yLength = (site.Longitude - y) * yCoef;
+            return Math.Sqrt(Math.Pow(xLength, 2) + Math.Pow(yLength, 2));
+        }
+        static bool HaveTheSameType(Place site, string type, string subtype)
+        {
+            return (type == "all" || type == site.Type) && (subtype == "all" || subtype == site.SubType);
+        }
     }
 }
