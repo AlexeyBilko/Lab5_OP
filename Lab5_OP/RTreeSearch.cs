@@ -30,6 +30,17 @@ namespace Lab5_OP
             }
             return places;
         }
-        
+        static bool CheckRadius(RTree node, double x, double y, int radius)
+        {
+            double nearestX = x < node.latitudeMin ? node.latitudeMin : x > node.latitudeMax ? node.latitudeMax : x;
+            double nearestY = y < node.longitudeMin ? node.longitudeMin : x > node.longitudeMax ? node.longitudeMax : y;
+            double xCoef1 = 111 * Math.Cos(y);
+            double xCoef2 = 111 * Math.Cos(nearestY);
+            double yCoef = 111;
+            double xLength = ((nearestX - x) * xCoef1 + (nearestX - x) * xCoef2) / 2;
+            double yLength = (nearestY - y) * yCoef;
+            return Math.Sqrt(Math.Pow(xLength, 2) + Math.Pow(yLength, 2)) <= radius;
+        }
+
     }
 }
