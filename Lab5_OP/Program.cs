@@ -11,23 +11,28 @@ namespace Lab5_OP
     {
         static void Main(string[] args)
         {
+
+
+
         }
-    }
 
-    public static RTree FillRTree(string filename)
-    {
-        RTree tree = new RTree();
-        List<string> list = new List<string>();
-        File.AppendAllLines(filename, list);
-
-        foreach (var item in list)
+        public static RTree FillRTree(string filename)
         {
-            string[] buf = item.Split(';');
-            tree.Add(new Place(double.Parse(buf[0]), double.Parse(buf[1]), buf[2], buf[3], buf[4], buf[5]));
-        }
+            RTree tree = new RTree();
+            List<string> list = new List<string>();
+            File.AppendAllLines(filename, list);
 
-        return tree;
+            foreach (var item in list)
+            {
+                string[] buf = item.Split(';');
+                tree.Add(new Place(double.Parse(buf[0]), double.Parse(buf[1]), buf[2], buf[3], buf[4], buf[5]));
+            }
+
+            return tree;
+        }
     }
+
+   
 
 
 }

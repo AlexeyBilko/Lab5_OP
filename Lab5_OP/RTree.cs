@@ -11,7 +11,7 @@ namespace Lab5_OP
         public int Size = 0;
         private int Capacity = 20;
 
-        List<Place> list;
+        public List<Place> list = new List<Place>();
 
         public double latitudeMax { get; private set; }
         public double latitudeMin { get; private set; }
