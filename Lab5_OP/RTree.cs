@@ -8,80 +8,95 @@ namespace Lab5_OP
 {
     public class RTree
     {
-        public int Size = 0;
-        private int Capacity = 20;
-
-        public List<Place> list;
-
-        public double latitudeMax { get; private set; }
-        public double latitudeMin { get; private set; }
-        public double longitudeMax { get; private set; }
-        public double longitudeMin { get; private set; }
-
         public bool IsParent = false;
         public RTree FirstChild;
         public RTree SecondChild;
 
-        public void Add(Place place)
+        public int Size = 0;
+        private int capacity = 20;
+
+        public double latitudeMax;
+        public double latitudeMin;
+        public double longitudeMax;
+        public double longitudeMin;
+
+        public List<Place> list = new List<Place>();
+
+        public void Add(Place e)
         {
             Size++;
+
             if (Size == 1)
             {
-                list = new List<Place>();
                 latitudeMax = latitudeMin;
-                latitudeMin = place.Latitude;
-
+                latitudeMin = e.Latitude;
                 longitudeMax = longitudeMin;
-                longitudeMin = place.Longitude;
+                longitudeMin = e.Longitude;
 
-                list.Add(place);
+                list.Add(e);
             }
-
             else
             {
-                latitudeMax = GetBigger(place.Latitude, latitudeMax);
-                longitudeMax = GetBigger(place.Longitude, longitudeMax);
-                latitudeMin = GetLower(place.Latitude, latitudeMin);
-                latitudeMax = GetBigger(place.Latitude, latitudeMax);
+                latitudeMax = FindBigger(e.Latitude, latitudeMax);
+                longitudeMax = FindBigger(e.Longitude, longitudeMax);
+                latitudeMin = FindLower(e.Latitude, latitudeMin);
+                latitudeMax = FindLower(e.Latitude, latitudeMax);
 
                 if (IsParent)
-                    InsertToChild(ref FirstChild, ref SecondChild, place);
+                {
+                    if (OptimalInclude(FirstChild, SecondChild, e))
+                        FirstChild.Add(e);
+                    else SecondChild.Add(e);
+                }
                 else
                 {
-                    list.Add(place);
-                    if (Size > Capacity)
-                        CreateChildren();
+                    list.Add(e);
+                    if (Size > capacity)
+                        Divide();
                 }
             }
         }
 
-        private static int CompareByLatitude(Place fisrtPlace, Place SecondPlace)
+        public static double FindBigger(double first, double second)
         {
-            if (fisrtPlace.Latitude > SecondPlace.Latitude)
+            if (first > second)
+                return first;
+            else return second;
+        }
+        public static double FindLower(double first, double second)
+        {
+            if (first < second)
+                return first;
+            else return second;
+        }
+
+        private static int CompareByCoordinateX(Place firstplace, Place secondplace)
+        {
+            if (firstplace.Latitude > secondplace.Latitude)
                 return 1;
-            if (fisrtPlace.Latitude < SecondPlace.Latitude)
+            if (firstplace.Latitude < secondplace.Latitude)
                 return -1;
-            if (fisrtPlace.Longitude > SecondPlace.Longitude)
+            if (firstplace.Longitude > secondplace.Longitude)
                 return 1;
-            if (fisrtPlace.Longitude < SecondPlace.Longitude)
+            if (firstplace.Longitude < secondplace.Longitude)
                 return -1;
             return 1;
         }
 
-        private static int CompareByLongitude(Place firstPlace, Place SecondPlace)
+        private static int CompareByCoordinateY(Place firstplace, Place secondplace)
         {
-            if (firstPlace.Longitude > SecondPlace.Longitude)
+            if (firstplace.Longitude > secondplace.Longitude)
                 return 1;
-            if (firstPlace.Longitude < SecondPlace.Longitude)
+            if (firstplace.Longitude < secondplace.Longitude)
                 return -1;
-            if (firstPlace.Latitude > SecondPlace.Latitude)
+            if (firstplace.Latitude > secondplace.Latitude)
                 return 1;
-            if (firstPlace.Latitude < SecondPlace.Latitude)
+            if (firstplace.Latitude < secondplace.Latitude)
                 return -1;
             return 1;
         }
 
-        private void CreateChildren()
+        private void Divide()
         {
             IsParent = true;
 
@@ -89,56 +104,48 @@ namespace Lab5_OP
             SecondChild = new RTree();
 
             if (latitudeMax - latitudeMin > longitudeMax - longitudeMin)
-                list.Sort(CompareByLatitude);
-            else list.Sort(CompareByLongitude);
+                list.Sort(CompareByCoordinateX);
+            else list.Sort(CompareByCoordinateY);
 
-            SecondChild.Add(list[Size - 1]);
             FirstChild.Add(list[0]);
+            SecondChild.Add(list[Size - 1]);
 
             list.RemoveAt(Size - 1);
             list.RemoveAt(0);
 
-            foreach (var item in list)
+            foreach (Place Place in list)
             {
-                InsertToChild(ref FirstChild, ref SecondChild, item);
+                if (OptimalInclude(FirstChild, SecondChild, Place)) FirstChild.Add(Place);
+                else SecondChild.Add(Place);
             }
         }
-
-        public static double GetBigger(double first, double second)
+        public static bool OptimalInclude(RTree first, RTree second, Place place)
         {
-            if (first > second)
-                return first;
-            else return second;
-        }
-        public static double GetLower(double first, double second)
-        {
-            if (first < second)
-                return first;
-            else return second;
-        }
+            double lalitudeMax1 = FindBigger(first.latitudeMax, place.Latitude);
+            double latitudeXMin1 = FindLower(first.latitudeMax, place.Latitude);
 
-        public static void InsertToChild(ref RTree FirstTree, ref RTree SecondTree, Place place)
-        {
-            double newLatitudeMax = GetBigger(FirstTree.latitudeMax, place.Latitude);
-            double newLatitudeMin = GetLower(FirstTree.latitudeMax, place.Latitude);
-            double newLongitudeMax = GetBigger(FirstTree.longitudeMax, place.Longitude);
-            double newLongitudeMin = GetLower(FirstTree.longitudeMax, place.Longitude);
+            double longitudeMax1 = FindBigger(first.longitudeMax, place.Longitude);
+            double longitudeMin1 = FindLower(first.longitudeMax, place.Longitude);
 
-            double tmp1 = (newLatitudeMax - newLatitudeMin) * (newLongitudeMax - newLongitudeMin) + (SecondTree.latitudeMax - SecondTree.latitudeMin) * (SecondTree.longitudeMax - SecondTree.longitudeMin);
+            double tmp1 = (lalitudeMax1 - latitudeXMin1) *
+                          (longitudeMax1 - longitudeMin1) +
+                          (second.latitudeMax - second.latitudeMin) *
+                          (second.longitudeMax - second.longitudeMin);
 
-            newLatitudeMax = GetBigger(SecondTree.latitudeMax, place.Latitude);
-            newLatitudeMin = GetLower(SecondTree.latitudeMax, place.Latitude);
-            newLongitudeMax = GetBigger(SecondTree.longitudeMax, place.Longitude);
-            newLongitudeMin = GetLower(SecondTree.longitudeMax, place.Longitude);
+            double latitudeMax2 = FindBigger(second.latitudeMax, place.Latitude);
+            double latitudeMin2 = FindLower(second.latitudeMax, place.Latitude);
 
-            double tmp2 = (FirstTree.latitudeMax - FirstTree.latitudeMin) * (FirstTree.longitudeMax - FirstTree.longitudeMin) + (newLatitudeMax - newLatitudeMin) * (newLongitudeMax - newLongitudeMin);
+            double longitudeMax2 = FindBigger(second.longitudeMax, place.Longitude);
+            double longitudeMin2 = FindLower(second.longitudeMax, place.Longitude);
 
-            if (tmp1 < tmp2)
-                FirstTree.Add(place);
-            else if (tmp2 > tmp1)
-                SecondTree.Add(place);
-            else
-                FirstTree.Add(place);
+            double tmp2 = (first.latitudeMax - first.latitudeMin) *
+                          (first.longitudeMax - first.longitudeMin) +
+                          (latitudeMax2 - latitudeMin2) *
+                          (longitudeMax2 - longitudeMin2);
+
+            if(tmp1 != tmp2)
+                return tmp1 < tmp2;
+            else return first.Size < second.Size;
         }
     }
 }
