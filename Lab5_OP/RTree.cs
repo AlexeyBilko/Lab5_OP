@@ -11,7 +11,7 @@ namespace Lab5_OP
         public int Size = 0;
         private int Capacity = 20;
 
-        public List<Place> list = new List<Place>();
+        public List<Place> list;
 
         public double latitudeMax { get; private set; }
         public double latitudeMin { get; private set; }
@@ -42,7 +42,7 @@ namespace Lab5_OP
                 latitudeMax = GetBigger(place.Latitude, latitudeMax);
                 longitudeMax = GetBigger(place.Longitude, longitudeMax);
                 latitudeMin = GetLower(place.Latitude, latitudeMin);
-                longitudeMin = GetLower(place.Longitude, longitudeMin);
+                latitudeMax = GetBigger(place.Latitude, latitudeMax);
 
                 if (IsParent)
                     InsertToChild(ref FirstChild, ref SecondChild, place);
