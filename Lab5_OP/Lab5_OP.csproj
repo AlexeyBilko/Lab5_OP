@@ -46,7 +46,7 @@
     <Compile Include="Place.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RTree.cs" />
+    <Compile Include="RNode.cs" />
     <Compile Include="RTreeSearch.cs" />
   </ItemGroup>
   <ItemGroup>
