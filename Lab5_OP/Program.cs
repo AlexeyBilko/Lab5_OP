@@ -11,13 +11,35 @@ namespace Lab5_OP
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Enter filename");
+            Console.WriteLine("Enter filename and coordinates and size!");
+
+            string type = "all", subtype = "all";
+
+            string stroka = Console.ReadLine();
+
+            string[]items = stroka.Split(new char[] {' '},StringSplitOptions.RemoveEmptyEntries);
+            
+
             string filename = Console.ReadLine();
-            RTree rTree = FillRTree(filename);
+            RTree rTree = FillRTree(items[0]);
 
+            Console.WriteLine();
 
-            Console.ReadLine();
+            List<Place> nearest = RTreeSearch.FindNearestEntities(rTree, double.Parse(items[1]), double.Parse(items[2]), int.Parse(items[3]));
+
+            foreach (var item in nearest)
+            {
+                Console.WriteLine(item.Address);
+            }
+            Console.WriteLine();
+
+            /*foreach (var item in nearest)
+            {
+                Console.WriteLine(item.ne);
+            }*/
         }
+
+       
 
         public static RTree FillRTree(string filename)
         {
@@ -40,46 +62,6 @@ namespace Lab5_OP
             return tree;
         }
         // ukraine_poi.csv 50 30 300 
-        /*
-          public static RTree FillRTree(string filename)
-        {
-            RTree tree = new();
-            using (StreamReader sr = new(filename))
-            {
-                for (int ctr = 0; !sr.EndOfStream; ctr++)
-                {
-                    string str = sr.ReadLine();
-                    if (str == null) continue;
-                    try
-                    {
-                        string[] items = str.Split(";");
-                        if (items.Length < 6) continue;
-                        tree.Add(new Entity(double.Parse(items[0]), double.Parse(items[1]), items[2], items[3], items[4], items[5]));
-                    }
-                    catch (IndexOutOfRangeException) { Console.WriteLine($"Oops, damaged line {ctr} in file... Let`s skip it!"); }
-                }
-            }
-            return tree;
-        }
-   
-         */
-
-        /*
-         public static RTree FillRTree(string path)
-        {
-            RTree tree = new RTree();
-            List<string> list = new List<string>();
-            File.AppendAllLines(path, list);
-
-            foreach (var item in list)
-            {
-                string[] buf = item.Split(';');
-                tree.Add(new Place(double.Parse(buf[0]), double.Parse(buf[1]), buf[2], buf[3], buf[4], buf[5]));
-            }
-
-            return tree;
-        }
-         */
-
+       
     }
 }

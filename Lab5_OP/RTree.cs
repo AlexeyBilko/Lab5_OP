@@ -13,7 +13,7 @@ namespace Lab5_OP
         public RTree SecondChild;
 
         public int Size = 0;
-        private int capacity = 20;
+        private int capacity = 10;
 
         public double latitudeMax;
         public double latitudeMin;
@@ -28,10 +28,8 @@ namespace Lab5_OP
 
             if (Size == 1)
             {
-                latitudeMax = latitudeMin;
-                latitudeMin = e.Latitude;
-                longitudeMax = longitudeMin;
-                longitudeMin = e.Longitude;
+                latitudeMax = latitudeMin = e.Latitude;
+                longitudeMax = longitudeMin = e.Longitude;
 
                 list.Add(e);
             }
