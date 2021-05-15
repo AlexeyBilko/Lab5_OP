@@ -25,16 +25,15 @@ namespace Lab5_OP
             size = items[3];
 
 
-            RTree rTree = FillRTree(FileName);
+            RNode rTree = FillRTree(FileName);
 
             Console.WriteLine();
 
-            List<Place> nearest = RTreeSearch.FindNearestEntities(rTree, double.Parse(Latitude), double.Parse(Longitude), int.Parse(size));
+            List<Place> nearest = RTreeSearch.FindNearestPlaces(rTree, double.Parse(Latitude), double.Parse(Longitude), int.Parse(size));
 
             Output(nearest);
             
             Console.WriteLine();
-
         }
 
         private static void Output(List<Place> nearest)
@@ -51,24 +50,22 @@ namespace Lab5_OP
             }
         }
 
-        public static RTree FillRTree(string filename = "ukraine_poi.csv")
+        public static RNode FillRTree(string filename)
         {
-            RTree tree = new RTree();
-            using (StreamReader sr = new StreamReader(filename))
-            {
-                for (int ctr = 0; !sr.EndOfStream; ctr++)
-                {
-                    string str = sr.ReadLine();
-                   
-                    string[] items = str.Split(';');
-                    if (items.Length < 6) continue;
-                    tree.Add(new Place(double.Parse(items[0]), double.Parse(items[1]), items[2], items[3], items[4], items[5]));
+            RNode tree = new RNode();
+            List<string> list = new List<string>();
 
-                }
+            list = File.ReadAllLines(filename).ToList();
+            foreach (var item in list)
+            {
+                string[] buf = item.Split(';');
+                tree.Add(new Place(double.Parse(buf[0]), double.Parse(buf[1]), buf[2], buf[3], buf[4], buf[5]));
             }
+
             return tree;
         }
-        // ukraine_poi.csv 50 30 300 
-       
+
+        //ukraine_poi.csv 48 35 15
+
     }
 }

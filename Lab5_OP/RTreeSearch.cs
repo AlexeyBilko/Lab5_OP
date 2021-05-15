@@ -8,15 +8,25 @@ namespace Lab5_OP
 {
     class RTreeSearch
     {
-        public static List<Place> FindNearestEntities(RTree node, double x, double y, int radius)
+        public static List<Place> FindNearestPlaces(RNode node, double x, double y, int radius)
         {
-            List<Place> entities = new List<Place>();
+            List<Place> Places = new List<Place>();
             if (node.IsParent)
             {
-                var first = (IsRadiusIsEnough(node.FirstChild, x, y, radius) ? FindNearestEntities(node.FirstChild, x, y, radius) : null);
-                var second = (IsRadiusIsEnough(node.SecondChild, x, y, radius) ? FindNearestEntities(node.SecondChild, x, y, radius) : null);
-              
-                
+                var first = new List<Place>();
+                if (IsRadiusIsEnough(node.FirstChild, x, y, radius))
+                     first = FindNearestPlaces(node.FirstChild, x, y, radius);
+                else
+                    first = null;
+
+
+                var second = new List<Place>();
+                if (IsRadiusIsEnough(node.SecondChild, x, y, radius))
+                    second = FindNearestPlaces(node.SecondChild, x, y, radius);
+                else
+                    second = null;
+
+
                 if (first == null && second == null) 
                     return null;
                 if (first == null) 
@@ -31,9 +41,9 @@ namespace Lab5_OP
             }
             foreach (var Place in node.list)
                 if (FindDistanceToPlace(Place, x, y) <= radius)
-                    entities.Add(Place);
+                    Places.Add(Place);
             
-            return entities;
+            return Places;
         }
 
         static bool IsRadiusIsEnough(RTree node, double x, double y, int radius)

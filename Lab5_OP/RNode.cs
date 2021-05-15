@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace Lab5_OP
 {
-    public class RTree
+    public class RNode
     {
         public bool IsParent = false;
-        public RTree FirstChild;
-        public RTree SecondChild;
+        public RNode FirstChild;
+        public RNode SecondChild;
 
         public int Size = 0;
-        private int capacity = 10;
+        private int capacity = 5;
 
         public double latitudeMax;
         public double latitudeMin;
@@ -78,7 +78,7 @@ namespace Lab5_OP
                 return 1;
             if (firstplace.Longitude < secondplace.Longitude)
                 return -1;
-            return 1;
+            return firstplace.Title.CompareTo(secondplace.Title);
         }
 
         private static int CompareByCoordinateY(Place firstplace, Place secondplace)
@@ -91,15 +91,15 @@ namespace Lab5_OP
                 return 1;
             if (firstplace.Latitude < secondplace.Latitude)
                 return -1;
-            return 1;
+            return firstplace.Title.CompareTo(secondplace.Title);
         }
 
         private void Divide()
         {
             IsParent = true;
 
-            FirstChild = new RTree();
-            SecondChild = new RTree();
+            FirstChild = new RNode();
+            SecondChild = new RNode();
 
             if (latitudeMax - latitudeMin > longitudeMax - longitudeMin)
                 list.Sort(CompareByCoordinateX);
@@ -117,7 +117,7 @@ namespace Lab5_OP
                 else SecondChild.Add(Place);
             }
         }
-        public static bool OptimalInclude(RTree first, RTree second, Place place)
+        public static bool OptimalInclude(RNode first, RNode second, Place place)
         {
             double lalitudeMax1 = FindBigger(first.latitudeMax, place.Latitude);
             double latitudeXMin1 = FindLower(first.latitudeMax, place.Latitude);
