@@ -48,7 +48,6 @@ namespace Lab5_OP
                     Console.WriteLine($" {index} title: { item.Title}");
                     index++;
                 }
-
             }
         }
 
