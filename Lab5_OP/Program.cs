@@ -11,7 +11,7 @@ namespace Lab5_OP
     {
         static void Main(string[] args)
         {
-            string FileName, Latitude, Longitude, size;
+            string FileName, Latitude, Longitude, count, type;
 
             Console.WriteLine("coordinates and size!");
 
@@ -22,14 +22,15 @@ namespace Lab5_OP
             FileName = items[0];
             Latitude = items[1];
             Longitude = items[2];
-            size = items[3];
+            count = items[3];
+            type = items[4];
 
 
             RNode rTree = FillRTree(FileName);
 
             Console.WriteLine();
 
-            List<Place> nearest = RTreeSearch.FindNearestPlaces(rTree, double.Parse(Latitude), double.Parse(Longitude), int.Parse(size));
+            List<Place> nearest = RNodeSearch.FindNearestPlacesByCount(rTree, double.Parse(Latitude), double.Parse(Longitude), int.Parse(count), type);
 
             Output(nearest);
             
@@ -44,7 +45,11 @@ namespace Lab5_OP
             {
                 if (item.Title != "")
                 {
-                    Console.WriteLine($" {index} title: { item.Title}");
+                    Console.WriteLine($" {index} title: no title | type: {item.Type}");
+                    index++;
+                }
+                else {
+                    Console.WriteLine($" {index} title: {item.Title} | type: {item.Type}");
                     index++;
                 }
             }

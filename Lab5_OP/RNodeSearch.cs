@@ -1,28 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Lab5_OP
 {
-    class RTreeSearch
+    class RNodeSearch
     {
-        public static List<Place> FindNearestPlaces(RNode node, double x, double y, int radius)
+        public static List<Place> FindNearestPlaces(RNode node, double x, double y, int radius, string type)
         {
             List<Place> Places = new List<Place>();
             if (node.IsParent)
             {
                 var first = new List<Place>();
                 if (IsRadiusIsEnough(node.FirstChild, x, y, radius))
-                     first = FindNearestPlaces(node.FirstChild, x, y, radius);
+                     first = FindNearestPlaces(node.FirstChild, x, y, radius, type);
                 else
                     first = null;
 
 
                 var second = new List<Place>();
                 if (IsRadiusIsEnough(node.SecondChild, x, y, radius))
-                    second = FindNearestPlaces(node.SecondChild, x, y, radius);
+                    second = FindNearestPlaces(node.SecondChild, x, y, radius,type);
                 else
                     second = null;
 
@@ -40,13 +37,35 @@ namespace Lab5_OP
                 return first;
             }
             foreach (var Place in node.list)
-                if (FindDistanceToPlace(Place, x, y) <= radius)
+                if (FindDistanceToPlace(Place, x, y) <= radius && type.ToString() == Place.Type.ToString())
                     Places.Add(Place);
             
             return Places;
         }
 
-        static bool IsRadiusIsEnough(RTree node, double x, double y, int radius)
+        public static List<Place> FindNearestPlacesByCount(RNode node, double x, double y, int count, string type)
+        {
+            int radius = 5;
+            List<Place> places = FindNearestPlaces(node, x, y, radius, type);
+            try
+            {
+                while ((places.Count <= count - 1))
+                {
+                    radius *= 2;
+                    places = FindNearestPlaces(node, x, y, radius, type);
+                }
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Out of range");
+            }
+
+            places.RemoveRange(count, places.Count - count);
+
+            return places;
+        }
+
+        static bool IsRadiusIsEnough(RNode node, double x, double y, int radius)
         {
             double nearestX;
             if (x < node.latitudeMin)
