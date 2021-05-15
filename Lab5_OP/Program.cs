@@ -11,37 +11,48 @@ namespace Lab5_OP
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Enter filename and coordinates and size!");
+            string FileName, Latitude, Longitude, size;
 
-            string type = "all", subtype = "all";
+            Console.WriteLine("coordinates and size!");
 
             string stroka = Console.ReadLine();
 
             string[]items = stroka.Split(new char[] {' '},StringSplitOptions.RemoveEmptyEntries);
+
+            FileName = items[0];
+            Latitude = items[1];
+            Longitude = items[2];
+            size = items[3];
+
+
+            RTree rTree = FillRTree(FileName);
+
+            Console.WriteLine();
+
+            List<Place> nearest = RTreeSearch.FindNearestEntities(rTree, double.Parse(Latitude), double.Parse(Longitude), int.Parse(size));
+
+            Output(nearest);
             
-
-            string filename = Console.ReadLine();
-            RTree rTree = FillRTree(items[0]);
-
             Console.WriteLine();
 
-            List<Place> nearest = RTreeSearch.FindNearestEntities(rTree, double.Parse(items[1]), double.Parse(items[2]), int.Parse(items[3]));
-
-            foreach (var item in nearest)
-            {
-                Console.WriteLine(item.Address);
-            }
-            Console.WriteLine();
-
-            /*foreach (var item in nearest)
-            {
-                Console.WriteLine(item.ne);
-            }*/
         }
 
-       
+        private static void Output(List<Place> nearest)
+        {
+            int index = 1;
+            Console.WriteLine("Title => Adress");
+            foreach (var item in nearest)
+            {
+                if (item.Title != "")
+                {
+                    Console.WriteLine($" {index} title: { item.Title}");
+                    index++;
+                }
 
-        public static RTree FillRTree(string filename)
+            }
+        }
+
+        public static RTree FillRTree(string filename = "ukraine_poi.csv")
         {
             RTree tree = new RTree();
             using (StreamReader sr = new StreamReader(filename))
@@ -49,14 +60,11 @@ namespace Lab5_OP
                 for (int ctr = 0; !sr.EndOfStream; ctr++)
                 {
                     string str = sr.ReadLine();
-                    if (str == null) continue;
-                    try
-                    {
-                        string[] items = str.Split(';');
-                        if (items.Length < 6) continue;
-                        tree.Add(new Place(double.Parse(items[0]), double.Parse(items[1]), items[2], items[3], items[4], items[5]));
-                    }
-                    catch (IndexOutOfRangeException) { Console.WriteLine($"Oops, damaged line {ctr} in file... Let`s skip it!"); }
+                   
+                    string[] items = str.Split(';');
+                    if (items.Length < 6) continue;
+                    tree.Add(new Place(double.Parse(items[0]), double.Parse(items[1]), items[2], items[3], items[4], items[5]));
+
                 }
             }
             return tree;
